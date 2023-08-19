@@ -84,15 +84,21 @@ struct hwpwm_chip *hwpwm_chip_open_path(const char *path)
     chip->export = hwpwm_open_in_dir(path, "export", O_WRONLY);
     if(chip->export < 0) {
         chip->lasterror = errno;
-        return chip;
+        goto export_fail;
     }
     chip->unexport = hwpwm_open_in_dir(path, "unexport", O_WRONLY);
     if(chip->unexport < 0) {
         chip->lasterror = errno;
-        return chip;
+        goto unexport_fail;
     }
 
     chip->lasterror = 0;
+    return chip;
+
+unexport_fail:
+    close(chip->export);
+export_fail:
+    free(chip->path);
     return chip;
 }
 
@@ -141,51 +147,46 @@ struct hwpwm_channel *hwpwm_chip_export_channel(struct hwpwm_chip *chip,
     char *channelbase = calloc(channelbaselen + 1, 1);
     if(!channelbase) {
         chip->lasterror = errno;
-        free(channel);
         free(istr);
-        return NULL;
+        goto channelbaselen_fail;
     }
     snprintf(channelbase, channelbaselen, "%s/pwm%s", chip->path, istr);
+    free(istr);
 
     channel->duty_cycle = hwpwm_open_in_dir(channelbase, "duty_cycle", O_WRONLY);
     if(channel->duty_cycle < 0) {
         chip->lasterror = errno;
-        free(channel);
-        free(istr);
-        return NULL;
+        goto channelbaselen_fail;
     }
     channel->period = hwpwm_open_in_dir(channelbase, "period", O_WRONLY);
     if(channel->period < 0) {
         chip->lasterror = errno;
-        free(channel);
-        free(istr);
-        close(channel->duty_cycle);
-        return NULL;
+        goto period_fail;
     }
     channel->polarity = hwpwm_open_in_dir(channelbase, "polarity", O_WRONLY);
     if(channel->polarity < 0) {
         chip->lasterror = errno;
-        free(channel);
-        free(istr);
-        close(channel->duty_cycle);
-        close(channel->period);
-        return NULL;
+        goto polarity_fail;
     }
     channel->enable = hwpwm_open_in_dir(channelbase, "enable", O_WRONLY);
     if(channel->enable < 0) {
         chip->lasterror = errno;
-        free(channel);
-        free(istr);
-        close(channel->duty_cycle);
-        close(channel->period);
-        close(channel->polarity);
-        return NULL;
+        goto enable_fail;
     }
-
-    free(istr);
     free(channelbase);
     chip->lasterror = 0;
     return channel;
+
+enable_fail:
+    close(channel->polarity);
+polarity_fail:
+    close(channel->period);
+period_fail:
+    close(channel->duty_cycle);
+channelbaselen_fail:
+    free(channel);
+    free(channelbase);
+    return NULL;
 }
 void hwpwm_chip_unexport_channel(struct hwpwm_chip *chip,
                                  struct hwpwm_channel *channel)
