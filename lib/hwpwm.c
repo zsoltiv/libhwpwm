@@ -88,3 +88,8 @@ struct hwpwm_chip *hwpwm_chip_open_index(unsigned i)
 
     return chip;
 }
+
+int hwpwm_chip_get_error(struct hwpwm_chip *chip)
+{
+    return chip ? chip->lasterror : ENOMEM;
+}
