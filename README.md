@@ -14,4 +14,4 @@ libhwpwm is documented using man-pages.
 
 - POSIX compatible system
 - make
-- C11 compiler
+- C99 compiler

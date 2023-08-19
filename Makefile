@@ -3,7 +3,8 @@ SHELL = /bin/sh
 .SUFFIXES: .c .o
 
 CC ?= cc
-CFLAGS ?= -g -std=c11
+AR ?= ar
+CFLAGS ?= -g -std=c99
 LDFLAGS ?= -lm
 
 all: libhwpwm.so libhwpwm.a
@@ -15,8 +16,7 @@ libhwpwm.so: lib/hwpwm.o
 	$(CC) $< -shared $(CFLAGS) $(LDFLAGS) -Iinclude -o $@
 
 libhwpwm.a: lib/hwpwm.o
-	$(CC) $< -static $(CFLAGS) $(LDFLAGS) -Iinclude -o $@
-
+	$(AR) rcs $@ $<
 
 clean:
 	rm -rf libhwpwm.a libhwpwm.so lib/hwpwm.o
