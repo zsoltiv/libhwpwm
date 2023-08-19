@@ -1,6 +1,6 @@
 # libhwpwm
 
-An easy to use interface to communicate with the Linux kernel's sysfs PWM interface.
+An easy to use library to communicate with the Linux kernel's sysfs PWM interface.
 
 ## What it doesn't do
 
