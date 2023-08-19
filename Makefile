@@ -8,6 +8,8 @@ CFLAGS ?= -g -std=c99
 LDFLAGS ?= -lm
 PREFIX ?= /usr/local
 
+DIST = libhwpwm-$(shell git tag | head -n1)
+
 all: libhwpwm.so libhwpwm.a
 
 lib/hwpwm.o: lib/hwpwm.c
@@ -35,14 +37,14 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/include/hwpwm.h
 
 dist:
-	mkdir -p libhwpwm
-	cp -r lib libhwpwm/lib
-	cp -r include libhwpwm/include
-	cp README.md libhwpwm/
-	cp Makefile libhwpwm/
-	cp COPYING libhwpwm/
-	cp COPYING.LESSER libhwpwm/
-	tar czf libhwpwm.tar.gz libhwpwm
-	rm -rf libhwpwm
+	mkdir -p $(DIST)
+	cp -r lib $(DIST)/lib
+	cp -r include $(DIST)/include
+	cp README.md $(DIST)/
+	cp Makefile $(DIST)/
+	cp COPYING $(DIST)/
+	cp COPYING.LESSER $(DIST)/
+	tar czf $(DIST).tar.gz $(DIST)
+	rm -rf $(DIST)
 
 .PHONY: clean uninstall dist
