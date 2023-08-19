@@ -15,6 +15,8 @@
  * along with libhwpwm. If not, see <https://www.gnu.org/licenses/>. 
 */
 
+#include <inttypes.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <unistd.h>
 #include <limits.h>
@@ -27,8 +29,7 @@
 
 #include "hwpwm.h"
 
-#define HWPWM_SYSFS_DIR "/sys/class/pwm"
-#define HWPWM_SYSFS_PWMCHIPN HWPWM_SYSFS_DIR "/pwmchip"
+#define HWPWM_SYSFS_PWMCHIPN "/sys/class/pwm/pwmchip"
 
 struct hwpwm_channel {
     unsigned idx;
@@ -40,25 +41,25 @@ struct hwpwm_chip {
     int export, unexport, npwm, lasterror;
 };
 
-static inline size_t hwpwm_digits(unsigned n)
+static inline size_t hwpwm_digits(uint64_t n)
 {
-    return log10(n) + 1;
+    return n == 0 ? 1 : log10(n) + 1;
 }
 
 static char *hwpwm_idx_to_str(unsigned n)
 {
-    size_t digits = hwpwm_digits(n);
-    char *buf = calloc(digits + 1, 1);
+    size_t bufsize = hwpwm_digits(n) + 1;
+    char *buf = calloc(bufsize, 1);
     if(!buf)
         return NULL;
-    snprintf(buf, digits, "%u", n);
+    snprintf(buf, bufsize, "%u", n);
     return buf;
 }
 
 static int hwpwm_open_in_dir(const char *dir, const char *file, int flags)
 {
-    size_t fullpathlen = strlen(dir) + strlen(file) + 1;
-    char *fullpath = calloc(fullpathlen + 1, 1);
+    size_t fullpathlen = strlen(dir) + strlen(file) + 2;
+    char *fullpath = calloc(fullpathlen, 1);
     if(!fullpath)
         return ENOMEM;
     snprintf(fullpath, fullpathlen, "%s/%s", dir, file);
@@ -66,7 +67,7 @@ static int hwpwm_open_in_dir(const char *dir, const char *file, int flags)
     return fd;
 }
 
-struct hwpwm_chip *hwpwm_chip_open_path(const char *path)
+static struct hwpwm_chip *hwpwm_chip_open_path(const char *path)
 {
     if(!path)
         return NULL;
@@ -112,8 +113,8 @@ export_fail:
 
 struct hwpwm_chip *hwpwm_chip_open_index(unsigned i)
 {
-    size_t pathlen = strlen(HWPWM_SYSFS_PWMCHIPN) + hwpwm_digits(i);
-    char *path = calloc(pathlen + 1, 1);
+    size_t pathlen = strlen(HWPWM_SYSFS_PWMCHIPN) + hwpwm_digits(i) + 1;
+    char *path = calloc(pathlen, 1);
     if(!path)
         return NULL;
     snprintf(path, pathlen, HWPWM_SYSFS_PWMCHIPN "%u", i);
@@ -145,7 +146,7 @@ struct hwpwm_channel *hwpwm_chip_export_channel(struct hwpwm_chip *chip,
     char *istr = hwpwm_idx_to_str(i);
     if(!istr) return NULL;
     size_t istrlen = strlen(istr);
-    if(write(chip->export, istr, istrlen) < 0) {
+    if(write(chip->export, istr, istrlen) < 0 && errno != EBUSY) {
         chip->lasterror = errno;
         free(istr);
         return NULL;
@@ -160,8 +161,8 @@ struct hwpwm_channel *hwpwm_chip_export_channel(struct hwpwm_chip *chip,
 
     channel->idx = i;
 
-    size_t channelbaselen = strlen(chip->path) + istrlen + 3;
-    char *channelbase = calloc(channelbaselen + 1, 1);
+    size_t channelbaselen = strlen(chip->path) + istrlen + 5;
+    char *channelbase = calloc(channelbaselen, 1);
     if(!channelbase) {
         chip->lasterror = errno;
         free(istr);
@@ -222,11 +223,13 @@ void hwpwm_chip_unexport_channel(struct hwpwm_chip *chip,
         return;
     }
 
-    if(write(chip->unexport, idxstr, strlen(idxstr) < 0))
+    if(write(chip->unexport, idxstr, strlen(idxstr) < 0) && errno != EBUSY)
         chip->lasterror = errno;
 
     free(channel);
+    chip->lasterror = 0;
 }
+
 
 unsigned hwpwm_chip_get_channel_count(struct hwpwm_chip *chip)
 {
@@ -234,6 +237,61 @@ unsigned hwpwm_chip_get_channel_count(struct hwpwm_chip *chip)
 
     size_t digits = hwpwm_digits(UINT_MAX);
     char *buf = calloc(digits + 1, 1);
-    read(chip->npwm, buf, digits);
-    return (unsigned)strtoul(buf, NULL, 10);
+    pread(chip->npwm, buf, digits, 0);
+    unsigned ret =  (unsigned)strtoul(buf, NULL, 10);
+    free(buf);
+    return ret;
+}
+
+#define HWPWM_CHANNEL_GETTER(prop, type)                         \
+    type hwpwm_channel_get_##prop(struct hwpwm_channel *channel) \
+    {                                                            \
+        if(!channel) return 0;                                   \
+        size_t bufsize = hwpwm_digits(UINT64_MAX) + 1;           \
+        char *buf = calloc(bufsize, 1);                          \
+        pread(channel->prop, buf, bufsize - 1, 0);               \
+        uint64_t ret;                                            \
+        sscanf(buf, "%"SCNu64, &ret);                            \
+        free(buf);                                               \
+        return (type)ret;                                        \
+    }
+
+#define HWPWM_CHANNEL_SETTER(prop, type)                                    \
+    void hwpwm_channel_set_##prop(struct hwpwm_channel *channel, type prop) \
+    {                                                                       \
+        if(!channel) return;                                                \
+        size_t bufsize = hwpwm_digits(prop) + 1;                            \
+        char *buf = calloc(bufsize + 1, 1);                                 \
+        if(!buf) return;                                                    \
+        snprintf(buf, bufsize, "%"PRIu64, (uint64_t)prop);                  \
+        write(channel->prop, buf, bufsize - 1);                             \
+        free(buf);                                                          \
+    }
+
+HWPWM_CHANNEL_GETTER(period, uint64_t)
+HWPWM_CHANNEL_GETTER(duty_cycle, uint64_t)
+HWPWM_CHANNEL_GETTER(enable, bool)
+HWPWM_CHANNEL_SETTER(period, uint64_t)
+HWPWM_CHANNEL_SETTER(duty_cycle, uint64_t)
+HWPWM_CHANNEL_SETTER(enable, bool)
+
+enum hwpwm_polarity hwpwm_channel_get_polarity(struct hwpwm_channel *channel)
+{
+    if(!channel) return HWPWM_POLARITY_NORMAL;
+    static const size_t bufsize = 9; // strlen("inversed") + 1
+    char buf[bufsize];
+    pread(channel->polarity, buf, bufsize, 0);
+    return *buf == 'n' ? HWPWM_POLARITY_NORMAL : HWPWM_POLARITY_INVERSED;
+}
+
+void hwpwm_channel_set_polarity(struct hwpwm_channel *channel,
+                                enum hwpwm_polarity polarity)
+{
+    if(!channel) return;
+    static const char *const normal = "normal";
+    static const char *const inversed = "inversed";
+    if(polarity == HWPWM_POLARITY_NORMAL)
+        write(channel->polarity, normal, strlen(normal));
+    else
+        write(channel->polarity, inversed, strlen(inversed));
 }
