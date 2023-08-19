@@ -160,22 +160,22 @@ struct hwpwm_channel *hwpwm_chip_export_channel(struct hwpwm_chip *chip,
     snprintf(channelbase, channelbaselen, "%s/pwm%s", chip->path, istr);
     free(istr);
 
-    channel->duty_cycle = hwpwm_open_in_dir(channelbase, "duty_cycle", O_WRONLY);
+    channel->duty_cycle = hwpwm_open_in_dir(channelbase, "duty_cycle", O_RDWR);
     if(channel->duty_cycle < 0) {
         chip->lasterror = errno;
         goto channelbaselen_fail;
     }
-    channel->period = hwpwm_open_in_dir(channelbase, "period", O_WRONLY);
+    channel->period = hwpwm_open_in_dir(channelbase, "period", O_RDWR);
     if(channel->period < 0) {
         chip->lasterror = errno;
         goto period_fail;
     }
-    channel->polarity = hwpwm_open_in_dir(channelbase, "polarity", O_WRONLY);
+    channel->polarity = hwpwm_open_in_dir(channelbase, "polarity", O_RDWR);
     if(channel->polarity < 0) {
         chip->lasterror = errno;
         goto polarity_fail;
     }
-    channel->enable = hwpwm_open_in_dir(channelbase, "enable", O_WRONLY);
+    channel->enable = hwpwm_open_in_dir(channelbase, "enable", O_RDWR);
     if(channel->enable < 0) {
         chip->lasterror = errno;
         goto enable_fail;
