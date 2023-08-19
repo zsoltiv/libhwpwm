@@ -29,4 +29,9 @@ install: all
 	install -d $(DESTDIR)$(PREFIX)/include/
 	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)/include/
 
-.PHONY: clean
+uninstall:
+	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.a
+	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.so
+	rm -f $(DESTDIR)$(PREFIX)/include/hwpwm.h
+
+.PHONY: clean uninstall
