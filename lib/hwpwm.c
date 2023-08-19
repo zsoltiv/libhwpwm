@@ -17,6 +17,7 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <limits.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <tgmath.h>
@@ -216,4 +217,14 @@ void hwpwm_chip_unexport_channel(struct hwpwm_chip *chip,
         chip->lasterror = errno;
 
     free(channel);
+}
+
+unsigned hwpwm_chip_get_channel_count(struct hwpwm_chip *chip)
+{
+    if(!chip) return 0;
+
+    size_t digits = hwpwm_digits(UINT_MAX);
+    char *buf = calloc(digits + 1, 1);
+    read(chip->npwm, buf, digits);
+    return (unsigned)strtoul(buf, NULL, 10);
 }
