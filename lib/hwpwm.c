@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2023 Zsolt Vadasz
+ *
  * This file is part of libhwpwm.
  *
  * libhwpwm is free software: you can redistribute it and/or modify it under
