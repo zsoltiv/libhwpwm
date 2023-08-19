@@ -36,7 +36,7 @@ struct hwpwm_channel {
 
 struct hwpwm_chip {
     char *path;
-    int export, unexport, lasterror;
+    int export, unexport, npwm, lasterror;
 };
 
 static inline size_t hwpwm_digits(unsigned n)
@@ -91,10 +91,17 @@ struct hwpwm_chip *hwpwm_chip_open_path(const char *path)
         chip->lasterror = errno;
         goto unexport_fail;
     }
+    chip->npwm = hwpwm_open_in_dir(path, "npwm", O_RDONLY);
+    if(chip->npwm < 0) {
+        chip->lasterror = errno;
+        goto npwm_fail;
+    }
 
     chip->lasterror = 0;
     return chip;
 
+npwm_fail:
+    close(chip->unexport);
 unexport_fail:
     close(chip->export);
 export_fail:
