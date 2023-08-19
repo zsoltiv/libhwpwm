@@ -34,4 +34,15 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.so
 	rm -f $(DESTDIR)$(PREFIX)/include/hwpwm.h
 
-.PHONY: clean uninstall
+dist:
+	mkdir -p libhwpwm
+	cp -r lib libhwpwm/lib
+	cp -r include libhwpwm/include
+	cp README.md libhwpwm/
+	cp Makefile libhwpwm/
+	cp COPYING libhwpwm/
+	cp COPYING.LESSER libhwpwm/
+	tar czf libhwpwm.tar.gz libhwpwm
+	rm -rf libhwpwm
+
+.PHONY: clean uninstall dist
