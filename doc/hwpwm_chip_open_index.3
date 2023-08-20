@@ -1,0 +1,34 @@
+hwpwm_chip_open_index(3)
+
+# NAME
+
+_hwpwm\_chip\_open\_index_ - Open PWM chip object at index
+
+# SYNOPSIS
+
+#include <hwpwm.h>
+
+struct hwpwm\_chip \*_hwpwm\_chip\_open\_index_(unsigned i, int \*error);
+
+# DESCRIPTION
+
+Opens the _export_, _unexport_, _npwm_ files for the  PWM chip at
+/sys/class/pwm/pwmchip_i_.
+
+The *i* parameter is the index of the PWM chip.
+
+If the function fails and *error* is not _NULL_, the integer it's pointing to
+is set to the last error code.
+
+# RETURN VALUES
+
+This function returns a pointer to an opaque _struct hwpwm\_chip_ or _NULL_ if
+it failed.
+
+# SEE ALSO
+
+_libhwpwm.h(3)_
+
+# AUTHORS
+
+The _libhwpwm_ library was written by Zsolt Vadasz <zsolt_vadasz@protonmail.com>.
