@@ -24,7 +24,7 @@
 #include <stdbool.h>
 
 struct hwpwm_chip;
-struct hwpwm_chip *hwpwm_chip_open_index(unsigned i);
+struct hwpwm_chip *hwpwm_chip_open_index(unsigned i, int *error);
 unsigned hwpwm_chip_get_channel_count(struct hwpwm_chip *chip);
 int hwpwm_chip_get_error(struct hwpwm_chip *chip);
 void hwpwm_chip_close(struct hwpwm_chip *chip);

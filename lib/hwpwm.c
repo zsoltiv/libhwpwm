@@ -70,7 +70,7 @@ static int hwpwm_open_in_dir(const char *dir, const char *file, int flags)
     return fd;
 }
 
-static struct hwpwm_chip *hwpwm_chip_open_path(const char *path)
+static struct hwpwm_chip *hwpwm_chip_open_path(const char *path, int *error)
 {
     if(!path)
         return NULL;
@@ -81,24 +81,24 @@ static struct hwpwm_chip *hwpwm_chip_open_path(const char *path)
     size_t pathlen = strlen(path);
     chip->path = calloc(pathlen + 1, 1);
     if(!chip->path) {
-        chip->lasterror = errno; // ENOMEM
-        return chip;
+        if(error) *error = errno;
+        goto path_fail;
     }
     strncpy(chip->path, path, pathlen);
 
     chip->export = hwpwm_open_in_dir(path, "export", O_WRONLY);
     if(chip->export < 0) {
-        chip->lasterror = errno;
+        if(error) *error = errno;
         goto export_fail;
     }
     chip->unexport = hwpwm_open_in_dir(path, "unexport", O_WRONLY);
     if(chip->unexport < 0) {
-        chip->lasterror = errno;
+        if(error) *error = errno;
         goto unexport_fail;
     }
     chip->npwm = hwpwm_open_in_dir(path, "npwm", O_RDONLY);
     if(chip->npwm < 0) {
-        chip->lasterror = errno;
+        if(error) *error = errno;
         goto npwm_fail;
     }
 
@@ -111,18 +111,22 @@ unexport_fail:
     close(chip->export);
 export_fail:
     free(chip->path);
-    return chip;
+path_fail:
+    free(chip);
+    return NULL;
 }
 
-struct hwpwm_chip *hwpwm_chip_open_index(unsigned i)
+struct hwpwm_chip *hwpwm_chip_open_index(unsigned i, int *error)
 {
     size_t pathlen = strlen(HWPWM_SYSFS_PWMCHIPN) + hwpwm_digits(i) + 1;
     char *path = calloc(pathlen, 1);
-    if(!path)
+    if(!path) {
+        if(error) *error = errno;
         return NULL;
+    }
     snprintf(path, pathlen, HWPWM_SYSFS_PWMCHIPN "%u", i);
 
-    struct hwpwm_chip *chip = hwpwm_chip_open_path(path);
+    struct hwpwm_chip *chip = hwpwm_chip_open_path(path, error);
     free(path);
 
     return chip;
