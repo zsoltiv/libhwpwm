@@ -36,7 +36,7 @@ libhwpwm.so: lib/hwpwm.o
 libhwpwm.a: lib/hwpwm.o
 	$(AR) rcs $@ $<
 
-man: $(MAN)
+man: $(SC)
 	scdoc < doc/libhwpwm.h.3.scd > doc/libhwpwm.h.3
 	scdoc < doc/hwpwm_channel_get_duty_cycle.3.scd > doc/hwpwm_channel_get_duty_cycle.3
 	scdoc < doc/hwpwm_channel_get_period.3.scd > doc/hwpwm_channel_get_period.3
@@ -61,6 +61,10 @@ install: all
 	install -m 644 libhwpwm.a $(DESTDIR)$(PREFIX)/lib/
 	install -d $(DESTDIR)$(PREFIX)/include/
 	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)/include/
+
+install-man: man
+	install -d $(DESTDIR)$(PREFIX)/man/man3/
+	install -m 644 doc/*.3 $(DESTDIR)$(PREFIX)/man/man3/
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.a
