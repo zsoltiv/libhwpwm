@@ -8,10 +8,11 @@ Interacting with PWM chips requires root access, which libhwpwm __doesn't handle
 
 ## Documentation
 
-libhwpwm is documented using man-pages.
+libhwpwm is documented using man-pages. See `man 3 libhwpwm.h`
 
 ## Requirements
 
 - POSIX compatible system
 - make
 - C99 compiler
+- scdoc for generating man-pages
