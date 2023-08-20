@@ -10,6 +10,21 @@ PREFIX ?= /usr/local
 
 DIST = libhwpwm-$(shell git tag | head -n1)
 
+SC = doc/libhwpwm.h.3.scd \
+	 doc/hwpwm_channel_get_duty_cycle.3.scd \
+	 doc/hwpwm_channel_get_period.3.scd \
+	 doc/hwpwm_channel_get_enable.3.scd \
+	 doc/hwpwm_channel_get_polarity.3.scd \
+	 doc/hwpwm_channel_set_duty_cycle.3.scd \
+	 doc/hwpwm_channel_set_period.3.scd \
+	 doc/hwpwm_channel_set_enable.3.scd \
+	 doc/hwpwm_channel_set_polarity.3.scd \
+	 doc/hwpwm_chip_open_index.3.scd \
+	 doc/hwpwm_chip_get_error.3.scd \
+	 doc/hwpwm_chip_export_channel.3.scd \
+	 doc/hwpwm_chip_unexport_channel.3.scd \
+	 doc/hwpwm_chip_close.3.scd
+
 all: libhwpwm.so libhwpwm.a
 
 lib/hwpwm.o: lib/hwpwm.c
@@ -21,8 +36,24 @@ libhwpwm.so: lib/hwpwm.o
 libhwpwm.a: lib/hwpwm.o
 	$(AR) rcs $@ $<
 
+man: $(MAN)
+	scdoc < doc/libhwpwm.h.3.scd > doc/libhwpwm.h.3
+	scdoc < doc/hwpwm_channel_get_duty_cycle.3.scd > doc/hwpwm_channel_get_duty_cycle.3
+	scdoc < doc/hwpwm_channel_get_period.3.scd > doc/hwpwm_channel_get_period.3
+	scdoc < doc/hwpwm_channel_get_enable.3.scd > doc/hwpwm_channel_get_enable.3
+	scdoc < doc/hwpwm_channel_get_polarity.3.scd > doc/hwpwm_channel_get_polarity.3
+	scdoc < doc/hwpwm_channel_set_duty_cycle.3.scd > doc/hwpwm_channel_set_duty_cycle.3
+	scdoc < doc/hwpwm_channel_set_period.3.scd > doc/hwpwm_channel_set_period.3
+	scdoc < doc/hwpwm_channel_set_enable.3.scd > doc/hwpwm_channel_set_enable.3
+	scdoc < doc/hwpwm_channel_set_polarity.3.scd > doc/hwpwm_channel_set_polarity.3
+	scdoc < doc/hwpwm_chip_open_index.3.scd > doc/hwpwm_chip_open_index.3
+	scdoc < doc/hwpwm_chip_get_error.3.scd > doc/hwpwm_chip_get_error.3
+	scdoc < doc/hwpwm_chip_export_channel.3.scd > doc/hwpwm_chip_export_channel.3
+	scdoc < doc/hwpwm_chip_unexport_channel.3.scd > doc/hwpwm_chip_unexport_channel.3
+	scdoc < doc/hwpwm_chip_close.3.scd > doc/hwpwm_chip_close.3
+
 clean:
-	rm -rf libhwpwm.a libhwpwm.so lib/hwpwm.o
+	rm -rf libhwpwm.a libhwpwm.so lib/hwpwm.o doc/*.3
 
 install: all
 	install -d $(DESTDIR)$(PREFIX)/lib/
