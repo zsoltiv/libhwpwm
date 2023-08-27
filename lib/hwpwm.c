@@ -302,3 +302,14 @@ void hwpwm_channel_set_polarity(struct hwpwm_channel *channel,
     else
         write(channel->polarity, inversed, strlen(inversed));
 }
+
+void hwpwm_channel_set_duty_cycle_percent(struct hwpwm_channel *channel,
+                                          unsigned duty_cycle_percent)
+{
+    if(!channel) return;
+
+    duty_cycle_percent = duty_cycle_percent > 100u ? 100u : duty_cycle_percent;
+    uint64_t period = hwpwm_channel_get_period(channel);
+    uint64_t duty_cycle = period * (duty_cycle_percent / 100.0);
+    hwpwm_channel_set_duty_cycle(channel, duty_cycle);
+}

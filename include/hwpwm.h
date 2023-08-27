@@ -46,6 +46,8 @@ bool hwpwm_channel_get_enable(struct hwpwm_channel *channel);
 void hwpwm_channel_set_period(struct hwpwm_channel *channel, uint64_t period);
 void hwpwm_channel_set_duty_cycle(struct hwpwm_channel *channel,
                                   uint64_t duty_cycle);
+void hwpwm_channel_set_duty_cycle_percent(struct hwpwm_channel *channel,
+                                          unsigned duty_cycle_percent);
 void hwpwm_channel_set_polarity(struct hwpwm_channel *channel,
                                 enum hwpwm_polarity polarity);
 void hwpwm_channel_set_enable(struct hwpwm_channel *channel, bool enable);
