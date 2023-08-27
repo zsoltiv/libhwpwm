@@ -313,3 +313,13 @@ void hwpwm_channel_set_duty_cycle_percent(struct hwpwm_channel *channel,
     uint64_t duty_cycle = period * (duty_cycle_percent / 100.0);
     hwpwm_channel_set_duty_cycle(channel, duty_cycle);
 }
+
+void hwpwm_channel_set_period_frequency(struct hwpwm_channel *channel,
+                                        uint64_t frequency)
+{
+    if(!channel) return;
+
+    static const uint64_t onesec = 1000000000ULL;
+    uint64_t period = onesec / frequency;
+    hwpwm_channel_set_period(channel, period);
+}
