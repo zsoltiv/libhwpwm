@@ -20,6 +20,7 @@ This function returns the error value from a PWM chip object (set by
 # RETURN VALUES
 
 This function returns Linux error codes such as *EACCES* or *ENOENT*.
+If _chip_ is NULL, the return value is *ENOMEM*.
 
 # SEE ALSO
 
