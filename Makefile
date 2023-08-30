@@ -8,7 +8,8 @@ CFLAGS ?= -g -std=c99
 LDFLAGS ?= -lm
 PREFIX ?= /usr/local
 
-DIST = libhwpwm-$(shell git tag | head -n1)
+VERSION = 0.2.0
+DIST = libhwpwm-$(VERSION)
 
 SC = doc/libhwpwm.h.3.scd \
 	 doc/hwpwm_channel_get_duty_cycle.3.scd \
