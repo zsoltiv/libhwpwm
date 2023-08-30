@@ -4,8 +4,9 @@ SHELL = /bin/sh
 
 CC ?= cc
 AR ?= ar
-CFLAGS ?= -g -std=c99
-LDFLAGS ?= -lm
+CFLAGS ?= -g
+CFLAGS += -std=c99
+LDFLAGS += -lm
 PREFIX ?= /usr/local
 
 VERSION = 0.3.0
