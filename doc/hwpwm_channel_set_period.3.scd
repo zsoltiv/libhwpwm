@@ -7,7 +7,9 @@ hwpwm\_channel\_get\_duty\_cycle,
 hwpwm\_channel\_get\_polarity,
 hwpwm\_channel\_get\_enable,
 hwpwm\_channel\_set\_period,
+hwpwm\_channel\_set\_period\_frequency,
 hwpwm\_channel\_set\_duty\_cycle,
+hwpwm\_channel\_set\_duty\_cycle\_percent,
 hwpwm\_channel\_set\_polarity,
 hwpwm\_channel\_set\_enable - functions for setting PWM channel parameters
 
@@ -21,12 +23,12 @@ uint64_t hwpwm_channel_get_duty_cycle(struct hwpwm_channel *channel);
 enum hwpwm_polarity hwpwm_channel_get_polarity(struct hwpwm_channel *channel);
 bool hwpwm_channel_get_enable(struct hwpwm_channel *channel);
 void hwpwm_channel_set_period(struct hwpwm_channel *channel, uint64_t period);
+void hwpwm_channel_set_period_frequency(struct hwpwm_channel *channel,
+                                        uint64_t frequency);
 void hwpwm_channel_set_duty_cycle(struct hwpwm_channel *channel,
                                   uint64_t duty_cycle);
-enum hwpwm_polarity {
-    HWPWM_POLARITY_NORMAL = 0,
-    HWPWM_POLARITY_INVERSED,
-};
+void hwpwm_channel_set_duty_cycle_percent(struct hwpwm_channel *channel,
+                                          unsigned duty_cycle_percent);
 void hwpwm_channel_set_polarity(struct hwpwm_channel *channel,
                                 enum hwpwm_polarity polarity);
 void hwpwm_channel_set_enable(struct hwpwm_channel *channel, bool enable);
@@ -36,6 +38,12 @@ void hwpwm_channel_set_enable(struct hwpwm_channel *channel, bool enable);
 
 The *hwpwm\_channel\_get\_\** and *hwpwm\_channel\_set\_\** functions each
 get/set a property of the PWM _channel_.
+
+*hwpwm\_channel\_set\_period\_frequency* sets the
+signal's period in _hertz_.
+
+*hwpwm\_channel\_set\_duty\_cycle\_percent* sets the duty cycle as a percentage
+of the _period_.
 
 # RETURN VALUES
 

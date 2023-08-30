@@ -1,4 +1,4 @@
-hwpwm_channel_set_polarity(3)
+hwpwm_channel_set_duty_cycle_percent(3)
 
 # NAME
 

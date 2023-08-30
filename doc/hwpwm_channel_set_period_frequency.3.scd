@@ -1,4 +1,4 @@
-hwpwm_channel_set_polarity(3)
+hwpwm_channel_set_period_frequency(3)
 
 # NAME
 
