@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <tgmath.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <string.h>
 
 #include "hwpwm.h"
