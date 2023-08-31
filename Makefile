@@ -9,7 +9,7 @@ CFLAGS += -std=c99
 LDFLAGS += -lm
 PREFIX ?= /usr/local
 
-VERSION = 0.3.0
+VERSION = 0.4.0
 DIST = libhwpwm-$(VERSION)
 
 SC = doc/libhwpwm.h.3.scd \
@@ -27,13 +27,17 @@ SC = doc/libhwpwm.h.3.scd \
 	 doc/hwpwm_chip_unexport_channel.3.scd \
 	 doc/hwpwm_chip_close.3.scd
 
+LIBDIR = lib
+MANDIR = share/man/man3
+INCDIR = include
+
 all: libhwpwm.so libhwpwm.a
 
 lib/hwpwm.o: lib/hwpwm.c
-	$(CC) $< -c -fPIC $(CFLAGS) -Iinclude -o $@
+	$(CC) $< -c -fPIC $(CFLAGS) -I$(INCDIR) -o $@
 
 libhwpwm.so: lib/hwpwm.o
-	$(CC) $< -shared $(CFLAGS) $(LDFLAGS) -Iinclude -o $@
+	$(CC) $< -shared $(CFLAGS) $(LDFLAGS) -I$(INCDIR) -o $@
 
 libhwpwm.a: lib/hwpwm.o
 	$(AR) rcs $@ $<
@@ -57,28 +61,28 @@ man: $(SC)
 	scdoc < doc/hwpwm_chip_close.3.scd > doc/hwpwm_chip_close.3
 
 clean:
-	rm -rf libhwpwm.a libhwpwm.so lib/hwpwm.o doc/*.3
+	rm -rf libhwpwm.a libhwpwm.so $(LIBDIR)/hwpwm.o doc/*.3
 
 install: all
-	install -d $(DESTDIR)$(PREFIX)/lib/
-	install -m 644 libhwpwm.so $(DESTDIR)$(PREFIX)/lib/
-	install -m 644 libhwpwm.a $(DESTDIR)$(PREFIX)/lib/
-	install -d $(DESTDIR)$(PREFIX)/include/
-	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)/include/
+	install -d $(DESTDIR)$(PREFIX)$(LIBDIR)/
+	install -m 644 libhwpwm.so $(DESTDIR)$(PREFIX)$(LIBDIR)/
+	install -m 644 libhwpwm.a $(DESTDIR)$(PREFIX)$(LIBDIR)/
+	install -d $(DESTDIR)$(PREFIX)$(INCDIR)
+	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)$(INCDIR)
 
 install-man: man
-	install -d $(DESTDIR)$(PREFIX)/share/man/man3/
-	install -m 644 doc/*.3 $(DESTDIR)$(PREFIX)/share/man/man3/
+	install -d $(DESTDIR)$(PREFIX)/$(MANDIR)/
+	install -m 644 doc/*.3 $(DESTDIR)$(PREFIX)/$(MANDIR)/
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.a
-	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.so
-	rm -f $(DESTDIR)$(PREFIX)/include/hwpwm.h
+	rm -f $(DESTDIR)$(PREFIX)$(LIBDIR)/libhwpwm.a
+	rm -f $(DESTDIR)$(PREFIX)$(LIBDIR)/libhwpwm.so
+	rm -f $(DESTDIR)$(PREFIX)$(INCDIR)hwpwm.h
 
 dist:
 	mkdir -p $(DIST)
-	cp -r lib $(DIST)/lib
-	cp -r include $(DIST)/include
+	cp -r $(LIBDIR) $(DIST)/$(LIBDIR)
+	cp -r $(INCDIR) $(DIST)/$(INCDIR)
 	cp README.md $(DIST)/
 	cp Makefile $(DIST)/
 	cp COPYING $(DIST)/
