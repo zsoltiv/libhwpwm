@@ -64,20 +64,20 @@ clean:
 	rm -rf libhwpwm.a libhwpwm.so $(LIBDIR)/hwpwm.o doc/*.3
 
 install: all
-	install -d $(DESTDIR)$(PREFIX)$(LIBDIR)/
-	install -m 644 libhwpwm.so $(DESTDIR)$(PREFIX)$(LIBDIR)/
-	install -m 644 libhwpwm.a $(DESTDIR)$(PREFIX)$(LIBDIR)/
-	install -d $(DESTDIR)$(PREFIX)$(INCDIR)
-	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)$(INCDIR)
+	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/
+	install -m 644 libhwpwm.so $(DESTDIR)$(PREFIX)/$(LIBDIR)/
+	install -m 644 libhwpwm.a $(DESTDIR)$(PREFIX)/$(LIBDIR)/
+	install -d $(DESTDIR)$(PREFIX)/$(INCDIR)
+	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)/$(INCDIR)
 
 install-man: man
 	install -d $(DESTDIR)$(PREFIX)/$(MANDIR)/
 	install -m 644 doc/*.3 $(DESTDIR)$(PREFIX)/$(MANDIR)/
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)$(LIBDIR)/libhwpwm.a
-	rm -f $(DESTDIR)$(PREFIX)$(LIBDIR)/libhwpwm.so
-	rm -f $(DESTDIR)$(PREFIX)$(INCDIR)hwpwm.h
+	rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/libhwpwm.a
+	rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/libhwpwm.so
+	rm -f $(DESTDIR)$(PREFIX)/$(INCDIR)hwpwm.h
 
 dist:
 	mkdir -p $(DIST)
