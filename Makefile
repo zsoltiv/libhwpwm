@@ -67,8 +67,8 @@ install: all
 	install -m 644 include/hwpwm.h $(DESTDIR)$(PREFIX)/include/
 
 install-man: man
-	install -d $(DESTDIR)$(PREFIX)/man/man3/
-	install -m 644 doc/*.3 $(DESTDIR)$(PREFIX)/man/man3/
+	install -d $(DESTDIR)$(PREFIX)/share/man/man3/
+	install -m 644 doc/*.3 $(DESTDIR)$(PREFIX)/share/man/man3/
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/lib/libhwpwm.a
