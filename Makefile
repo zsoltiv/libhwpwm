@@ -86,6 +86,8 @@ dist:
 	cp README.md $(DIST)/
 	cp Makefile $(DIST)/
 	cp COPYING $(DIST)/
+	mkdir -p $(DIST)/doc
+	cp doc/*.scd $(DIST)/doc
 	cp COPYING.LESSER $(DIST)/
 	tar czf $(DIST).tar.gz $(DIST)
 	rm -rf $(DIST)
