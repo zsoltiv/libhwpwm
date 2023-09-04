@@ -18,7 +18,9 @@ SC = doc/libhwpwm.h.3.scd \
 	 doc/hwpwm_channel_get_enable.3.scd \
 	 doc/hwpwm_channel_get_polarity.3.scd \
 	 doc/hwpwm_channel_set_duty_cycle.3.scd \
+	 doc/hwpwm_channel_set_duty_cycle_percent.3.scd \
 	 doc/hwpwm_channel_set_period.3.scd \
+	 doc/hwpwm_channel_set_period_frequency.3.scd \
 	 doc/hwpwm_channel_set_enable.3.scd \
 	 doc/hwpwm_channel_set_polarity.3.scd \
 	 doc/hwpwm_chip_open_index.3.scd \
