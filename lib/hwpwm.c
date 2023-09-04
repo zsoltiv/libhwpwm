@@ -35,7 +35,7 @@
 
 struct hwpwm_channel {
     unsigned idx;
-    int duty_cycle, enable, period, polarity, lasterror;
+    int duty_cycle, enable, period, polarity;
 };
 
 struct hwpwm_chip {
