@@ -154,15 +154,13 @@ struct hwpwm_channel *hwpwm_chip_export_channel(struct hwpwm_chip *chip,
     size_t istrlen = strlen(istr);
     if(write(chip->export, istr, istrlen) < 0 && errno != EBUSY) {
         chip->lasterror = errno;
-        free(istr);
-        return NULL;
+        goto istr_fail;
     }
 
     struct hwpwm_channel *channel = malloc(sizeof(struct hwpwm_channel));
     if(!channel) {
         chip->lasterror = errno;
-        free(istr);
-        return NULL;
+        goto channel_fail;
     }
 
     channel->idx = i;
@@ -171,7 +169,6 @@ struct hwpwm_channel *hwpwm_chip_export_channel(struct hwpwm_chip *chip,
     char *channelbase = calloc(channelbaselen, 1);
     if(!channelbase) {
         chip->lasterror = errno;
-        free(istr);
         goto channelbaselen_fail;
     }
     snprintf(channelbase, channelbaselen, "%s/pwm%s", chip->path, istr);
@@ -208,8 +205,11 @@ polarity_fail:
 period_fail:
     close(channel->duty_cycle);
 channelbaselen_fail:
-    free(channel);
     free(channelbase);
+channel_fail:
+    free(channel);
+istr_fail:
+    free(istr);
     return NULL;
 }
 void hwpwm_chip_unexport_channel(struct hwpwm_chip *chip,
