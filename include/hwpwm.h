@@ -20,6 +20,10 @@
 #ifndef HWPWM_H
 #define HWPWM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -53,5 +57,9 @@ void hwpwm_channel_set_duty_cycle_percent(struct hwpwm_channel *channel,
 void hwpwm_channel_set_polarity(struct hwpwm_channel *channel,
                                 enum hwpwm_polarity polarity);
 void hwpwm_channel_set_enable(struct hwpwm_channel *channel, bool enable);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* HWPWM_H */
