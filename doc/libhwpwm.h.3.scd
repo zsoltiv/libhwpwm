@@ -38,7 +38,9 @@ The *hwpwm\_chip\_\** family of functions may fail, so you should call
 *hwpwm\_channel\_get\_polarity(3)*
 *hwpwm\_channel\_get\_enable(3)*
 *hwpwm\_channel\_set\_period(3)*
+*hwpwm\_channel\_set\_period\_frequency(3)*
 *hwpwm\_channel\_set\_duty\_cycle(3)*
+*hwpwm\_channel\_set\_duty\_cycle\_percent(3)*
 *hwpwm\_channel\_set\_polarity(3)*
 *hwpwm\_channel\_set\_enable(3)*
 
