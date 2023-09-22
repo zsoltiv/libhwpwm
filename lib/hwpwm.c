@@ -281,12 +281,14 @@ HWPWM_CHANNEL_SETTER(period, uint64_t)
 HWPWM_CHANNEL_SETTER(duty_cycle, uint64_t)
 HWPWM_CHANNEL_SETTER(enable, bool)
 
+// strlen("inversed") + 1
+#define POLARITY_BUFSIZE 9
+
 enum hwpwm_polarity hwpwm_channel_get_polarity(struct hwpwm_channel *channel)
 {
     if(!channel) return HWPWM_POLARITY_NORMAL;
-    static const size_t bufsize = 9; // strlen("inversed") + 1
-    char buf[bufsize];
-    pread(channel->polarity, buf, bufsize, 0);
+    static char buf[POLARITY_BUFSIZE];
+    pread(channel->polarity, buf, POLARITY_BUFSIZE, 0);
     return *buf == 'n' ? HWPWM_POLARITY_NORMAL : HWPWM_POLARITY_INVERSED;
 }
 
