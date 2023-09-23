@@ -5,7 +5,6 @@ SHELL = /bin/sh
 CC ?= cc
 AR ?= ar
 CFLAGS ?= -g
-CFLAGS += -std=c99
 LDFLAGS += -lm
 PREFIX ?= /usr/local
 
