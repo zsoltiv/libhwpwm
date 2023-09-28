@@ -229,7 +229,7 @@ void hwpwm_chip_unexport_channel(struct hwpwm_chip *chip,
         return;
     }
 
-    if(write(chip->unexport, idxstr, strlen(idxstr) < 0) && errno != EBUSY)
+    if(write(chip->unexport, idxstr, strlen(idxstr)) < 0 && errno != EBUSY)
         chip->lasterror = errno;
 
     free(channel);
