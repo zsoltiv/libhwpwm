@@ -8,7 +8,7 @@ CFLAGS ?= -g
 LDFLAGS += -lm
 PREFIX ?= /usr/local
 
-VERSION = 0.4.4
+VERSION = 0.4.5
 DIST = libhwpwm-$(VERSION)
 
 SC = doc/libhwpwm.h.3.scd \

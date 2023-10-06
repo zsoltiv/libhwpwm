@@ -66,6 +66,7 @@ static int hwpwm_open_in_dir(const char *dir, const char *file, int flags)
         return ENOMEM;
     snprintf(fullpath, fullpathlen, "%s/%s", dir, file);
     int fd = open(fullpath, flags);
+    free(fullpath);
     return fd;
 }
 
@@ -232,6 +233,7 @@ void hwpwm_chip_unexport_channel(struct hwpwm_chip *chip,
     if(write(chip->unexport, idxstr, strlen(idxstr)) < 0)
         chip->lasterror = errno;
 
+    free(idxstr);
     free(channel);
     chip->lasterror = 0;
 }
